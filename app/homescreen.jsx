@@ -24,7 +24,6 @@ import Animated, {
 export default function HomePage() {
   const Container = Platform.OS === "web" ? ScrollView : SafeAreaView;
   const { colorScheme, setColorScheme, theme } = useContext(ThemeContext);
-  const styles = createStyles(theme, colorScheme);
 
   const [todos, setTodos] = useState(todoList.sort((a, b) => b.id - a.id));
   const [newTodo, setNewTodo] = useState(``);
@@ -57,6 +56,7 @@ export default function HomePage() {
     console.log(id);
     setTodos(todos.filter((todo) => todo.id !== id));
   };
+  const styles = createStyles(theme, colorScheme);
 
   return (
     <Container style={styles.container}>
