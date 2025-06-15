@@ -34,7 +34,6 @@ export default function RootLayout() {
             title: "Home",
           }}
         />
-        <Stack.Screen name="explore" options={{ title: "Explore" }} />
       </Stack>
       <StatusBar style="auto" />
     </ThemeProvider>
