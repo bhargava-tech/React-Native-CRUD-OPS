@@ -2,7 +2,6 @@ import {
   Text,
   Image,
   View,
-  Appearance,
   Platform,
   StyleSheet,
   ScrollView,
@@ -11,23 +10,25 @@ import {
   Pressable,
   SafeAreaView,
 } from "react-native";
-import { Colors } from "@/constants/Colors";
 import { todoList } from "@/data/Todos";
 import deleteIcon from "@/assets/images/delete.png";
 import addIcon from "@/assets/images/add-icon.png";
-import { useState } from "react";
-import { Inter_500Medium, useFonts } from "@expo-google-fonts/inter";
+import { useContext, useState } from "react";
+import { ThemeContext } from "@/context/ThemeContext";
+import { Molengo_400Regular, useFonts } from "@expo-google-fonts/molengo";
+import Ionicons from "@expo/vector-icons/Ionicons";
+import Animated, {
+  LinearTransition as AnimType,
+} from "react-native-reanimated";
 
 export default function HomePage() {
-  const colorScheme = Appearance.getColorScheme();
-  const theme = colorScheme === "dark" ? Colors.dark : Colors.light;
-
   const Container = Platform.OS === "web" ? ScrollView : SafeAreaView;
+  const { colorScheme, setColorScheme, theme } = useContext(ThemeContext);
   const styles = createStyles(theme, colorScheme);
 
   const [todos, setTodos] = useState(todoList.sort((a, b) => b.id - a.id));
   const [newTodo, setNewTodo] = useState(``);
-  const [loaded, error] = useFonts({ Inter_500Medium });
+  const [loaded, error] = useFonts({ Molengo_400Regular });
 
   if (!loaded && !error) {
     return null;
@@ -74,8 +75,19 @@ export default function HomePage() {
         >
           <Image style={styles.addimage} source={addIcon} />
         </Pressable>
+        <Pressable
+          onPress={() => {
+            setColorScheme(colorScheme === "dark" ? "light" : "dark");
+          }}
+        >
+          {colorScheme === "dark" ? (
+            <Ionicons name="moon" size={30} color="white" />
+          ) : (
+            <Ionicons name="sunny" size={30} color="gray" />
+          )}
+        </Pressable>
       </View>
-      <FlatList
+      <Animated.FlatList
         data={todos}
         style={styles.flatList}
         renderItem={({ item }) => (
@@ -99,6 +111,8 @@ export default function HomePage() {
         )}
         keyExtractor={(item) => item.id}
         showsVerticalScrollIndicator={false}
+        itemLayoutAnimation={AnimType}
+        keyboardDismissMode={"on-drag"}
       />
     </Container>
   );
@@ -109,8 +123,10 @@ function createStyles(theme, colorScheme) {
     container: {
       flex: 1,
       backgroundColor: theme.background,
-      padding: 10,
-      marginBottom: 20,
+      paddingLeft: 10,
+      paddingTop: 10,
+      paddingRight: 10,
+      paddingBottom: 30,
     },
     flatList: {
       marginTop: 10,
@@ -132,12 +148,14 @@ function createStyles(theme, colorScheme) {
     textNormal: {
       color: theme.text,
       fontSize: 16,
+      fontFamily: "Molengo_400Regular",
       flex: 1,
       fontWeight: "bold",
     },
     textRemoved: {
       color: "gray",
       fontSize: 16,
+      fontFamily: "Molengo_400Regular",
       flex: 1,
       textDecorationLine: "line-through",
       fontWeight: "bold",
@@ -151,6 +169,7 @@ function createStyles(theme, colorScheme) {
       height: 40,
       paddingHorizontal: 10,
       fontSize: 15,
+      fontFamily: "Molengo_400Regular",
       borderRightWidth: 1,
       marginEnd: 10,
       borderRightColor: "gray",

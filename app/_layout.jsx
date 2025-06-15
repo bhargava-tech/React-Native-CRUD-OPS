@@ -1,33 +1,28 @@
-import {
-  DarkTheme,
-  DefaultTheme,
-  ThemeProvider,
-} from "@react-navigation/native";
 import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import "react-native-reanimated";
-
-import { useColorScheme } from "@/hooks/useColorScheme";
+import { ThemeProvider } from "../context/ThemeContext";
+import { Colors } from "@/constants/Colors";
+import { Appearance } from "react-native";
 
 export default function RootLayout() {
-  const colorScheme = useColorScheme();
-  const theme = colorScheme === "dark" ? DarkTheme : DefaultTheme;
   const [loaded] = useFonts({
     SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
   });
-
   if (!loaded) {
-    // Async font loading only occurs in development.
     return null;
   }
 
+  const theme =
+    Appearance.getColorScheme() === "dark" ? Colors.dark : Colors.light;
+
   return (
-    <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
+    <ThemeProvider>
       <Stack
         screenOptions={{
-          headerStyle: { backgroundColor: theme.colors.primary },
-          headerTintColor: theme.text,
+          headerStyle: { backgroundColor: theme.headerBackgroundColor },
+          headerTintColor: theme.headerColor,
           headerShadowVisible: false,
         }}
       >
