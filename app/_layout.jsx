@@ -4,7 +4,7 @@ import { StatusBar } from "expo-status-bar";
 import "react-native-reanimated";
 import { ThemeProvider } from "../context/ThemeContext";
 import { Colors } from "@/constants/Colors";
-import { Appearance } from "react-native";
+import { Appearance, Platform } from "react-native";
 
 export default function RootLayout() {
   const [loaded] = useFonts({
@@ -16,6 +16,7 @@ export default function RootLayout() {
 
   const theme =
     Appearance.getColorScheme() === "dark" ? Colors.dark : Colors.light;
+  const isAndroid = Platform.OS === "android" ? true : false;
 
   return (
     <ThemeProvider>
@@ -23,17 +24,17 @@ export default function RootLayout() {
         screenOptions={{
           headerStyle: { backgroundColor: theme.headerBackgroundColor },
           headerTintColor: theme.headerColor,
-          headerShadowVisible: false,
+          headerShadowVisible: true,
+          headerShown: isAndroid,
         }}
       >
         <Stack.Screen
           name="homescreen"
           options={{
             title: "Home",
-            headerShown: true,
           }}
         />
-        <Stack.Screen name="explore" options={{ headerShown: true }} />
+        <Stack.Screen name="explore" options={{ title: "Explore" }} />
       </Stack>
       <StatusBar style="auto" />
     </ThemeProvider>
