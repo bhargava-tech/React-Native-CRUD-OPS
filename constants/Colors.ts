@@ -6,7 +6,8 @@ export const Colors = {
     icon: '#687076',
     swapColor: "gray",
     headerColor:"white",
-    headerBackgroundColor:"red"
+    headerBackgroundColor:"#ac3973",
+    themeColor:"#ac3973"
   },
   dark: {
     text: 'white',
@@ -14,6 +15,8 @@ export const Colors = {
     icon: '#9BA1A6',
     swapColor: "white",
     headerColor:"white",
-    headerBackgroundColor:"blue"
+    headerBackgroundColor:"#ac3973", 
+    themeColor:"#ac3973"
+
   },
 };

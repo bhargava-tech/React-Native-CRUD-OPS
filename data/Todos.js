@@ -98,7 +98,8 @@ export const todoList = [
   {
     id: 17,
     title: "Buy birthday gift",
-    description: "Purchase a gift for a friend's birthday",
+    description:
+      "Purchase a gift for a friend's birthday Purchase a gift for a friend's birthday Purchase a gift for a friend's birthday Purchase a gift for a friend's birthday",
     completed: false,
   },
   {

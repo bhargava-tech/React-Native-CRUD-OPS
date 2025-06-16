@@ -2,47 +2,34 @@ import {
   Text,
   Image,
   View,
-  Platform,
   StyleSheet,
-  ScrollView,
   TextInput,
+  RefreshControl,
   Pressable,
-  SafeAreaView,
 } from "react-native";
 import { todoList } from "@/data/Todos";
 import deleteIcon from "@/assets/images/delete.png";
 import addIcon from "@/assets/images/add-icon.png";
-import { useContext, useState, useEffect } from "react";
+import { useContext, useState, useEffect, useCallback } from "react";
 import { ThemeContext } from "@/context/ThemeContext";
-import { Molengo_400Regular, useFonts } from "@expo-google-fonts/molengo";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import Animated, {
   LinearTransition as AnimType,
 } from "react-native-reanimated";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useRouter } from "expo-router";
 
 export default function HomePage() {
-  const Container = Platform.OS === "web" ? ScrollView : SafeAreaView;
-  const { colorScheme, setColorScheme, theme } = useContext(ThemeContext);
+  const { colorScheme, setColorScheme, theme, Container } =
+    useContext(ThemeContext);
 
   const [todos, setTodos] = useState([]);
   const [newTodo, setNewTodo] = useState(``);
-  const [loaded, error] = useFonts({ Molengo_400Regular });
+  const [refreshing, setRefreshing] = useState(false);
+
+  const router = useRouter();
 
   useEffect(() => {
-    const fetchAsync = async () => {
-      try {
-        const jsonData = await AsyncStorage.getItem("TODODATA");
-        const remoteData = jsonData != null ? JSON.parse(jsonData) : null;
-        if (remoteData && remoteData.length) {
-          setTodos(remoteData.sort((a, b) => b.id - a.id));
-        } else {
-          setTodos(todoList.sort((a, b) => b.id - a.id));
-        }
-      } catch (e) {
-        console.log(e);
-      }
-    };
     fetchAsync();
   }, [todoList]);
 
@@ -57,10 +44,6 @@ export default function HomePage() {
     };
     updateAsync();
   }, [todos]);
-
-  if (!loaded && !error) {
-    return null;
-  }
 
   const onAddPress = () => {
     console.log(`Add button pressed - ${newTodo}`);
@@ -85,6 +68,26 @@ export default function HomePage() {
     console.log(id);
     setTodos(todos.filter((todo) => todo.id !== id));
   };
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    fetchAsync();
+    setRefreshing(false);
+  }, []);
+
+  const fetchAsync = async () => {
+    try {
+      const jsonData = await AsyncStorage.getItem("TODODATA");
+      const remoteData = jsonData != null ? JSON.parse(jsonData) : null;
+      if (remoteData && remoteData.length) {
+        setTodos(remoteData.sort((a, b) => b.id - a.id));
+      } else {
+        setTodos(todoList.sort((a, b) => b.id - a.id));
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
   const styles = createStyles(theme, colorScheme);
 
   return (
@@ -113,9 +116,9 @@ export default function HomePage() {
           }}
         >
           {colorScheme === "dark" ? (
-            <Ionicons name="moon" size={30} color="white" />
+            <Ionicons name="moon" size={30} color={theme.themeColor} />
           ) : (
-            <Ionicons name="sunny" size={30} color="gray" />
+            <Ionicons name="sunny" size={30} color={theme.themeColor} />
           )}
         </Pressable>
       </View>
@@ -127,6 +130,13 @@ export default function HomePage() {
             <Text
               style={[styles.textNormal, item.completed && styles.textRemoved]}
               onPress={() => {
+                if (item.completed) {
+                  alert("Todo action completed");
+                } else {
+                  router.push(`/${JSON.stringify(item)}`);
+                }
+              }}
+              onLongPress={() => {
                 togleTodo(item.id);
               }}
             >
@@ -145,6 +155,9 @@ export default function HomePage() {
         showsVerticalScrollIndicator={false}
         itemLayoutAnimation={AnimType}
         keyboardDismissMode={"on-drag"}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
       />
     </Container>
   );
@@ -182,7 +195,6 @@ function createStyles(theme, colorScheme) {
       height: 40,
       paddingHorizontal: 10,
       fontSize: 16,
-      fontFamily: "Molengo_400Regular",
       borderRightWidth: 1,
       marginEnd: 10,
       borderRightColor: "gray",
@@ -223,14 +235,12 @@ function createStyles(theme, colorScheme) {
     textNormal: {
       color: theme.text,
       fontSize: 15,
-      fontFamily: "Molengo_400Regular",
       flex: 1,
       fontWeight: "bold",
     },
     textRemoved: {
       color: "gray",
       fontSize: 15,
-      fontFamily: "Molengo_400Regular",
       flex: 1,
       textDecorationLine: "line-through",
       fontWeight: "bold",

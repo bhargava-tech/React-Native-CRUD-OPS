@@ -29,9 +29,15 @@ export default function RootLayout() {
         }}
       >
         <Stack.Screen
-          name="homescreen"
+          name="index"
           options={{
             title: "Home",
+          }}
+        />
+        <Stack.Screen
+          name="[todo]"
+          options={{
+            title: "Update Todos",
           }}
         />
       </Stack>
