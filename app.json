@@ -16,7 +16,8 @@
         "foregroundImage": "./assets/images/app-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "edgeToEdgeEnabled": true
+      "edgeToEdgeEnabled": true,
+      "package": "com.bhargava.reddy.crudop"
     },
     "web": {
       "bundler": "metro",
@@ -37,6 +38,13 @@
     ],
     "experiments": {
       "typedRoutes": true
-    }
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "be00173d-5849-4982-848d-0960d713af5b"
+      }
+    },
+    "owner": "bhargava.reddy"
   }
 }
